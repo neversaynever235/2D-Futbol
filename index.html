@@ -127,6 +127,8 @@
     };
     const W=1000,H=600,L=40,R=960,T=40,B=560,GT=245,GB=355;
     const DEFAULT_SHOT_CHARGE=0.45; // Potencia inicial del disparo: 45%
+    const AI_DIFFICULTY="medium"; // Dificultad seleccionada: media
+    const AI_SPEED_FACTOR={easy:0.82,medium:1,hard:1.18}[AI_DIFFICULTY];
     const keys=new Set();
     const state={mode:"intro",time:90,score:[0,0],goalPause:0,charge:0,charging:false,last:0,flash:0,trail:[],players:[],ball:{x:500,y:300,vx:0,vy:0,r:9},aiCooldown:0};
     const starts=[
@@ -249,7 +251,7 @@
           ty=base[1]+(b.y-base[1])*.23;
           if(p.team && p.number===1){tx=Math.max(480,Math.min(870,b.x+115));ty=300+(b.y-300)*.28;}
         }
-        steer(p,tx,ty,dt,chase?200:143);
+        steer(p,tx,ty,dt,(chase?200:143)*AI_SPEED_FACTOR);
       });
       let dx=(keys.has("d")||keys.has("arrowright")?1:0)-(keys.has("a")||keys.has("arrowleft")?1:0);
       let dy=(keys.has("s")||keys.has("arrowdown")?1:0)-(keys.has("w")||keys.has("arrowup")?1:0);
@@ -260,7 +262,7 @@
       if(distance(enemyChaser,b)<31&&state.aiCooldown===0){
         const goalY=300+(enemyChaser.y-300)*.18;
         const angle=Math.atan2(goalY-b.y,25-b.x);
-        b.vx=Math.cos(angle)*440;b.vy=Math.sin(angle)*440;
+        b.vx=Math.cos(angle)*440*AI_SPEED_FACTOR;b.vy=Math.sin(angle)*440*AI_SPEED_FACTOR;
         state.aiCooldown=.85;state.flash=.17;
       }
     }
